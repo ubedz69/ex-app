@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+  <rect width="900" height="520" fill="#FFFFFF"/>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <!-- Frame accent -->
+    <path d="M120 120 C220 40, 390 40, 490 120" fill="none" stroke="#0B5DA7" stroke-width="10"/>
+    <path d="M610 120 C710 40, 820 90, 820 190" fill="none" stroke="#FF9A1C" stroke-width="10"/>
+    <path d="M130 400 C240 480, 420 480, 530 400" fill="none" stroke="#0B5DA7" stroke-width="10"/>
+  </g>
+
+  <!-- Route -->
+  <g>
+    <path d="M110 320 C220 250, 310 230, 400 260 C510 300, 560 250, 640 210 C740 160, 805 180, 835 230"
+          fill="none" stroke="#0B5DA7" stroke-width="10" stroke-dasharray="18 14"/>
+    <path d="M120 330 C235 255, 320 240, 410 270 C520 310, 575 265, 650 225 C745 175, 805 195, 830 235"
+          fill="none" stroke="#FF9A1C" stroke-width="6" opacity="0.95"/>
+  </g>
+
+  <!-- Package stack -->
+  <g transform="translate(280,170)">
+    <rect x="0" y="120" width="190" height="160" rx="18" fill="#0B5DA7"/>
+    <rect x="20" y="90" width="150" height="130" rx="18" fill="#FF9A1C"/>
+    <rect x="40" y="60" width="110" height="110" rx="18" fill="#1B1B18"/>
+
+    <path d="M30 170 L125 130 L175 160" fill="none" stroke="#FFFFFF" stroke-width="8"/>
+    <circle cx="60" cy="210" r="10" fill="#FFFFFF"/>
+    <circle cx="95" cy="210" r="10" fill="#FFFFFF" opacity="0.8"/>
+    <circle cx="130" cy="210" r="10" fill="#FFFFFF" opacity="0.65"/>
+
+    <!-- Label -->
+    <rect x="55" y="145" width="80" height="50" rx="12" fill="#FFFFFF"/>
+    <path d="M70 175 L85 160 L100 175 L115 165" fill="none" stroke="#0B5DA7" stroke-width="6"/>
+  </g>
+
+  <!-- Airplane / fast icon -->
+  <g transform="translate(520,90)">
+    <path d="M160 140 L60 120 L10 70 L20 60 L70 110 L150 110 L195 30 L215 40 L185 120 L250 155 L245 175 L185 155 L160 240 L140 230 Z"
+          fill="#0B5DA7" stroke="#0B5DA7" stroke-width="8"/>
+    <path d="M70 110 L120 145" stroke="#FF9A1C" stroke-width="10"/>
+    <circle cx="175" cy="150" r="12" fill="#FF9A1C"/>
+  </g>
+
+  <!-- Silly map markers -->
+  <g transform="translate(650,330)">
+    <path d="M70 0 C45 0, 25 20, 25 45 C25 75, 70 140, 70 140 C70 140, 115 75, 115 45 C115 20, 95 0, 70 0 Z"
+          fill="#FF9A1C" stroke="#1B1B18" stroke-width="6"/>
+    <circle cx="70" cy="45" r="18" fill="#FFFFFF" stroke="#0B5DA7" stroke-width="6"/>
+  </g>
+
+  <!-- Bottom brand band -->
+  <g>
+    <rect x="110" y="430" width="680" height="70" rx="24" fill="#FFFFFF" stroke="#0B5DA7" stroke-width="10" opacity="0.98"/>
+    <path d="M170 465 C220 430, 290 430, 340 465 C390 500, 460 500, 510 465 C560 430, 640 430, 690 465"
+          fill="none" stroke="#FF9A1C" stroke-width="10"/>
+    <text x="450" y="486" text-anchor="middle" font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial" font-size="28" font-weight="900" fill="#1B1B18">
+      RAI RAKA EXPRESS
+    </text>
+  </g>
+</svg>
