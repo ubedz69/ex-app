@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', config('app.name') . ' — Pelacakan Paket')
+@section('title', config('app.name') . ' | Jasa Pengiriman Keluar Negeri')
 @section('meta_description', 'Rai Raka Express melayani ekspedisi internasional ke luar negeri, termasuk pengiriman ke Jepang. Lacak paket cepat dan dapatkan status real-time.')
 @section('meta_keywords', 'jasa ekspedisi internasional, jasa kirim barang luar negeri, cargo internasional murah, pengiriman barang ke Jepang, ekspedisi Indonesia Jepang, jasa import export terpercaya, pengiriman door to door internasional, jasa kirim paket cepat luar negeri, cargo udara internasional, jasa pengiriman barang UMKM export, Rai Raka Express, Rai Raka Express cargo, Rai Raka Express Jepang, Rai Raka Express tracking, Rai Raka Express ekspedisi internasional, Rai Raka Express pengiriman luar negeri')
 
@@ -20,7 +20,7 @@
             </form>
 
             <div class="mt-4">
-                <a href="{{ url('/contact') }}" class="btn btn-outline" style="background:transparent;color:#000;border:2px solid rgba(2,6,23,0.08);text-decoration:none;padding:10px 16px;border-radius:10px;display:inline-block;font-weight:900;">Butuh Bantuan? Hubungi Kami</a>
+                <a href="{{ url('/contact') }}" class="btn btn-outline" style="background:transparent;color:#000;border:2px solid rgba(2,6,23,0.08);text-decoration:none;padding:12px 14px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-weight:900;min-height:44px;white-space:nowrap;">Butuh Bantuan? Hubungi Kami</a>
             </div>
         </div>
 

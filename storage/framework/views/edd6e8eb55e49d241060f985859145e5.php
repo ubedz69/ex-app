@@ -1,10 +1,10 @@
-@extends('layouts.app')
 
-@section('title', 'Services — '.config('app.name'))
-@section('meta_description', 'Rai Raka Express melayani ekspedisi internasional door-to-door ke luar negeri, termasuk pengiriman ke Jepang. Nikmati proses pengiriman yang rapi, cepat, dan mudah dipantau dengan tracking real-time.')
-@section('meta_keywords', 'jasa ekspedisi internasional, jasa kirim barang luar negeri, cargo internasional murah, pengiriman barang ke Jepang, ekspedisi Indonesia Jepang, jasa import export terpercaya, pengiriman door to door internasional, jasa kirim paket cepat luar negeri, cargo udara internasional, jasa pengiriman barang UMKM export, Rai Raka Express, Rai Raka Express cargo, Rai Raka Express Jepang, Rai Raka Express tracking, Rai Raka Express ekspedisi internasional, Rai Raka Express pengiriman luar negeri')
 
-@section('content')
+<?php $__env->startSection('title', 'Services — '.config('app.name')); ?>
+<?php $__env->startSection('meta_description', 'Rai Raka Express melayani ekspedisi internasional door-to-door ke luar negeri, termasuk pengiriman ke Jepang. Nikmati proses pengiriman yang rapi, cepat, dan mudah dipantau dengan tracking real-time.'); ?>
+<?php $__env->startSection('meta_keywords', 'jasa ekspedisi internasional, jasa kirim barang luar negeri, cargo internasional murah, pengiriman barang ke Jepang, ekspedisi Indonesia Jepang, jasa import export terpercaya, pengiriman door to door internasional, jasa kirim paket cepat luar negeri, cargo udara internasional, jasa pengiriman barang UMKM export, Rai Raka Express, Rai Raka Express cargo, Rai Raka Express Jepang, Rai Raka Express tracking, Rai Raka Express ekspedisi internasional, Rai Raka Express pengiriman luar negeri'); ?>
+
+<?php $__env->startSection('content'); ?>
 <div class="container">
     <div class="card" style="padding:28px;max-width:900px;margin:0 auto;">
         <h1 class="hero-title" style="font-size:32px;line-height:1.1;margin-bottom:8px;">Layanan Kami</h1>
@@ -74,4 +74,6 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\Website\expedition-app\resources\views/services.blade.php ENDPATH**/ ?>

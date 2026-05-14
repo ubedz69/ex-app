@@ -22,8 +22,29 @@
                 <div class="top-left">
                     <small>Pilih negara / bahasa</small>
                 </div>
-                <div class="top-right">
-                    <a href="{{ url('/contact') }}" class="btn btn-ghost">Help & Support</a>
+                <div class="top-right" style="display:flex;align-items:center;justify-content:flex-end;gap:10px;">
+                    <div aria-label="Social links" style="display:flex;gap:10px;align-items:center;justify-content:flex-end;">
+<a href="https://wa.me/6285121112486" target="_blank" rel="noopener noreferrer"
+                           class="btn btn-outline"
+                           aria-label="WhatsApp"
+                           style="display:inline-flex;align-items:center;justify-content:center;padding:8px 10px;border-radius:12px;min-height:44px;min-width:44px;white-space:nowrap;border:1px solid rgba(2,6,23,0.08);text-decoration:none;background:transparent;color:#000;">
+<img aria-hidden="true" src="{{ asset('images/icon-wa.png') }}" alt="" width="26" height="26" style="display:block;border-radius:8px;">
+                        </a>
+
+                        <a href="https://facebook.com/rairakaexpress" target="_blank" rel="noopener noreferrer"
+                           class="btn btn-outline"
+                           aria-label="Facebook"
+                           style="display:inline-flex;align-items:center;justify-content:center;padding:8px 10px;border-radius:12px;min-height:44px;min-width:44px;white-space:nowrap;border:1px solid rgba(2,6,23,0.08);text-decoration:none;background:transparent;color:#000;">
+                            <img aria-hidden="true" src="{{ asset('images/icon-fb.svg') }}" alt="" width="26" height="26" style="display:block;border-radius:8px;">
+                        </a>
+
+                        <a href="https://instagram.com/rairaka_express" target="_blank" rel="noopener noreferrer"
+                           class="btn btn-outline"
+                           aria-label="Instagram"
+                           style="display:inline-flex;align-items:center;justify-content:center;padding:8px 10px;border-radius:12px;min-height:44px;min-width:44px;white-space:nowrap;border:1px solid rgba(2,6,23,0.08);text-decoration:none;background:transparent;color:#000;">
+                            <img aria-hidden="true" src="{{ asset('images/icon-ig.svg') }}" alt="" width="26" height="26" style="display:block;border-radius:8px;">
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -37,7 +58,6 @@
                 <a href="{{ url('/about') }}">About</a>
                 <a href="{{ url('/services') }}">Services</a>
                 <a href="{{ url('/tracking') }}">Tracking</a>
-                <a href="{{ url('/locations') }}">Locations</a>
                 <a href="{{ url('/contact') }}">Contact</a>
             </nav>
 
@@ -59,8 +79,9 @@
     </main>
 
     <footer class="site-footer">
-        <div class="container footer-inner">
-<small>&copy; {{ date('Y') }} Rai Raka Express — Logistics & Ekspedisi</small>
+        <div class="container footer-inner" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+            <small>&copy; {{ date('Y') }} Rai Raka Express — Logistics & Ekspedisi</small>
+
         </div>
     </footer>
 

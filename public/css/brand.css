@@ -70,7 +70,14 @@ body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica
 .inline-track-form .input, .inline-track-form .select{border:1px solid #e6eef6;padding:8px}
 .main-nav a:hover{color:var(--brand-blue)}
 
-@media(max-width:800px){.main-nav{display:none}.header-actions .inline-track-form .input{width:100px}}
+/* Show menu button only on mobile */
+#menu-button{display:none}
+
+@media(max-width:800px){
+  #menu-button{display:inline-block}
+  .main-nav{display:none}
+  .header-actions .inline-track-form .input{width:100px}
+}
 
 /* Responsive menu open state */
 #main-nav.open{display:flex;flex-direction:column;gap:12px}
