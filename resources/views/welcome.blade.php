@@ -127,6 +127,50 @@
             </div>
         </section>
 
+        <section class="blog-latest" style="margin-top:18px;padding:18px 16px;border-radius:14px;border:2px solid rgba(2,6,23,0.06);background:#fff;">
+            <h3 style="margin:0 0 10px 0;font-size:16px;font-weight:900;color:#0f172a;">Blog Terbaru</h3>
+            <p style="margin:0 0 12px 0;color:#54617a;font-weight:700;line-height:1.6;">
+                Ringkasan posting terbaru kami tampil di sini. (Dari halaman Blog)
+            </p>
+
+            @php
+                $posts = app('App\Http\Controllers\BlogController')->latestSummaries(3);
+                $posts = is_array($posts) ? $posts : [];
+            @endphp
+
+            @if(count($posts) === 0)
+                <div style="padding:14px;border-radius:12px;border:2px dashed rgba(2,6,23,0.12);color:#54617a;font-weight:700;background:rgba(2,6,23,0.02);">
+                    Belum ada posting blog.
+                </div>
+            @else
+                <div style="display:grid;grid-template-columns:1fr;gap:12px;">
+                    @foreach($posts as $post)
+                        <a href="{{ url('/blog') }}" style="text-decoration:none;color:inherit;">
+                            <div style="padding:14px;border-radius:12px;border:2px solid rgba(2,6,23,0.06);background:#fff;">
+                                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;">
+                                    <h4 style="margin:0;font-size:15px;font-weight:900;color:#0f172a;line-height:1.3;">
+                                        {{ $post['title'] ?? '' }}
+                                    </h4>
+                                    <div style="color:#54617a;font-weight:700;font-size:12px;white-space:nowrap;">
+                                        {{ $post['created_at'] ?? '' }}
+                                    </div>
+                                </div>
+                                <p style="margin:8px 0 0 0;color:#56697f;font-weight:700;line-height:1.6;">
+                                    {{ $post['summary'] ?? '' }}
+                                </p>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+
+                <div style="margin-top:12px;">
+                    <a href="{{ url('/blog') }}" class="btn btn-outline" style="background:transparent;color:#000;border:2px solid rgba(2,6,23,0.08);text-decoration:none;padding:10px 14px;border-radius:12px;display:inline-block;font-weight:900;">
+                        Lihat Semua Blog
+                    </a>
+                </div>
+            @endif
+        </section>
+
         <section class="site-cta" style="margin-top:18px; padding:18px 16px; border-radius:14px;">
             <h3 style="margin:0 0 6px 0;">Siap Kirim?</h3>
             <p style="margin:0 0 12px 0; opacity:0.95; font-weight:700;">Dapatkan solusi ekspedisi dan pelacakan yang rapi.</p>

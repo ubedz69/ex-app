@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
 
+require __DIR__ . '/blog.php';
+
 Route::get('/', [HomeController::class, 'index']);
 
 Route::get('/tracking', [TrackingController::class, 'index']);

@@ -58,6 +58,7 @@
                 <a href="<?php echo e(url('/about')); ?>">About</a>
                 <a href="<?php echo e(url('/services')); ?>">Services</a>
                 <a href="<?php echo e(url('/tracking')); ?>">Tracking</a>
+                <a href="<?php echo e(url('/blog')); ?>">Blog</a>
                 <a href="<?php echo e(url('/contact')); ?>">Contact</a>
             </nav>
 
