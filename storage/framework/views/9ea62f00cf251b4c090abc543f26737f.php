@@ -1,18 +1,16 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Tracking Paket — ' . config('app.name')); ?>
 
-@section('title', 'Tracking Paket — ' . config('app.name'))
+<?php $__env->startSection('meta_description', 'Lacak paket internasional Rai Raka Express secara real-time menggunakan nomor AWB. Cek status pengiriman cepat dan akurat.'); ?>
+<?php $__env->startSection('meta_keywords', 'jasa ekspedisi internasional, jasa kirim barang luar negeri, cargo internasional murah, pengiriman barang ke Jepang, ekspedisi Indonesia Jepang, jasa import export terpercaya, pengiriman door to door internasional, jasa kirim paket cepat luar negeri, cargo udara internasional, jasa pengiriman barang UMKM export, Rai Raka Express, Rai Raka Express cargo, Rai Raka Express Jepang, Rai Raka Express tracking, Rai Raka Express ekspedisi internasional, Rai Raka Express pengiriman luar negeri'); ?>
 
-@section('meta_description', 'Lacak paket internasional Rai Raka Express secara real-time menggunakan nomor AWB. Cek status pengiriman cepat dan akurat.')
-@section('meta_keywords', 'jasa ekspedisi internasional, jasa kirim barang luar negeri, cargo internasional murah, pengiriman barang ke Jepang, ekspedisi Indonesia Jepang, jasa import export terpercaya, pengiriman door to door internasional, jasa kirim paket cepat luar negeri, cargo udara internasional, jasa pengiriman barang UMKM export, Rai Raka Express, Rai Raka Express cargo, Rai Raka Express Jepang, Rai Raka Express tracking, Rai Raka Express ekspedisi internasional, Rai Raka Express pengiriman luar negeri')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="container">
         <section class="hero card" aria-label="Tracking paket" style="background:#fff; padding:22px; display:flex; flex-direction:column;">
             <div class="left" style="max-width:100%; order:1; width:100%; display:block;">
                 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;">
                     <div style="display:flex;align-items:center;gap:12px;">
                         <div style="width:52px;height:52px;border:4px solid var(--brand-blue);border-radius:16px;display:flex;align-items:center;justify-content:center;background:#fff;">
-                            <img src="{{ asset('images/logo-compact.png') }}" alt="{{ config('app.name') }} logo" style="height:28px;width:auto;">
+                            <img src="<?php echo e(asset('images/logo-compact.png')); ?>" alt="<?php echo e(config('app.name')); ?> logo" style="height:28px;width:auto;">
                         </div>
                         <div>
                             <h1 class="hero-title" style="margin:0; font-size:28px;">Pelacakan Paket</h1>
@@ -20,11 +18,11 @@
                     </div>
 
                     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-                        <a href="{{ url('/') }}" class="btn-outline" style="padding:10px 14px;border:2px solid rgba(2,6,23,0.08);border-radius:12px;font-weight:900;">
+                        <a href="<?php echo e(url('/')); ?>" class="btn-outline" style="padding:10px 14px;border:2px solid rgba(2,6,23,0.08);border-radius:12px;font-weight:900;">
                             ← Beranda
                         </a>
 
-                        <a href="{{ url('/contact') }}" class="btn-outline" style="border:2px solid rgba(2,6,23,0.08); padding:10px 14px;border-radius:12px;font-weight:900;">
+                        <a href="<?php echo e(url('/contact')); ?>" class="btn-outline" style="border:2px solid rgba(2,6,23,0.08); padding:10px 14px;border-radius:12px;font-weight:900;">
                             Butuh Bantuan?
                         </a>
                     </div>
@@ -35,8 +33,8 @@
                         Masukkan Nomor Resi
                     </h2>
 
-                    <form method="POST" action="{{ url('/tracking') }}" class="tracking-form" aria-label="Form tracking">
-                        @csrf
+                    <form method="POST" action="<?php echo e(url('/tracking')); ?>" class="tracking-form" aria-label="Form tracking">
+                        <?php echo csrf_field(); ?>
 
                         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
                             <div style="flex:1;min-width:260px;">
@@ -81,7 +79,7 @@
                         </div>
 
                         <div id="tracking-result" aria-live="polite" aria-atomic="true" style="padding-right:12px; box-sizing:border-box;">
-                            @php
+                            <?php
                                 /** @var array<string,mixed> $result */
                                 $result = $result ?? [];
 
@@ -126,61 +124,67 @@
                                         $dhlShipments = (array) $ship;
                                     }
                                 }
-                            @endphp
+                            ?>
 
-                            @if(count($dhlShipments) > 0)
-                                @if(isset($result['error']) && $result['error'])
+                            <?php if(count($dhlShipments) > 0): ?>
+                                <?php if(isset($result['error']) && $result['error']): ?>
                                     <div role="status" style="background:#fef3c7;border:1px solid rgba(180,35,24,0.22);color:#b42318;padding:12px;border-radius:14px;font-weight:900;margin-bottom:12px;">
                                         <div style="font-size:14px;margin-bottom:8px;">
-                                            {{ $result['error'] }}
+                                            <?php echo e($result['error']); ?>
+
                                         </div>
                                     </div>
-                                @endif
+                                <?php endif; ?>
 
                                 <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
-                                    @foreach($dhlShipments as $shipment)
-                                                @php
+                                    <?php $__currentLoopData = $dhlShipments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $shipment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <?php
                                                     $status = (isset($shipment['status']) && is_array($shipment['status'])) ? $shipment['status'] : [];
                                                     $events = (isset($shipment['events']) && is_array($shipment['events'])) ? $shipment['events'] : [];
                                                     $destination = (isset($shipment['destination']) && is_array($shipment['destination'])) ? $shipment['destination'] : [];
                                                     $origin = (isset($shipment['origin']) && is_array($shipment['origin'])) ? $shipment['origin'] : [];
-                                                @endphp
+                                                ?>
 
                                                 <div style="border:2px solid rgba(180,35,24,0.22);border-radius:14px;padding:12px;background:#fff;">
                                                     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
                                                         <div>
                                                             <div style="font-weight:1000;font-size:14px;">
-                                                                Air Way Bill: {{ $shipment['id'] ?? '-' }}
+                                                                Air Way Bill: <?php echo e($shipment['id'] ?? '-'); ?>
+
                                                             </div>
                                                             <div style="color:#54617a;font-weight:800;font-size:12px;margin-top:4px;">
-                                                                {{ $destination['address']['addressLocality'] ?? '-' }} ←
-                                                                {{ $origin['address']['addressLocality'] ?? '-' }}
+                                                                <?php echo e($destination['address']['addressLocality'] ?? '-'); ?> ←
+                                                                <?php echo e($origin['address']['addressLocality'] ?? '-'); ?>
+
                                                             </div>
                                                         </div>
 
                                                         <div style="text-align:right;">
                                                             <div style="font-weight:1000;font-size:14px;">
-                                                                Status {{ $status['status'] ?? $status['statusCode'] ?? '-' }}
+                                                                Status <?php echo e($status['status'] ?? $status['statusCode'] ?? '-'); ?>
+
                                                             </div>
                                                             <div style="color:#54617a;font-weight:800;font-size:12px;margin-top:4px;max-width:240px;">
-                                                                {{ $status['description'] ?? '-' }}
+                                                                <?php echo e($status['description'] ?? '-'); ?>
+
                                                             </div>
                                                         </div>
                                                     </div>
 
-                                                    @if(isset($status['timestamp']))
+                                                    <?php if(isset($status['timestamp'])): ?>
                                                         <div style="margin-top:8px;color:#54617a;font-weight:800;font-size:12px;">
-                                                            Updated: {{ $status['timestamp'] }}
+                                                            Updated: <?php echo e($status['timestamp']); ?>
+
                                                         </div>
-                                                    @endif
+                                                    <?php endif; ?>
 
-                                                    {{-- Next steps removed per request --}}
+                                                    
 
-                                                    @if(count($events) > 0)
+                                                    <?php if(count($events) > 0): ?>
                                                             <div style="margin-top:10px;">
                                                                 <div style="font-weight:1000;font-size:13px;margin-bottom:6px;">Last updates</div>
 
-                                                                @php
+                                                                <?php
                                                                     $sortedEvents = is_array($events) ? $events : [];
                                                                     usort($sortedEvents, function ($a, $b) {
                                                                         $ta = $a['timestamp'] ?? '';
@@ -189,9 +193,9 @@
                                                                     });
                                                                     // Tampilkan semua event (earliest -> latest)
                                                                     $eventsToShow = $sortedEvents;
-                                                                @endphp
+                                                                ?>
 
-                                                            @php
+                                                            <?php
                                                                 // Build groups by date in timezone-less way (ISO date part)
                                                                 $groups = [];
                                                                 foreach ($eventsToShow as $event) {
@@ -215,12 +219,13 @@
                                                                 // $groups terbentuk dari $eventsToShow (earliest -> latest), jadi reverse untuk terbaru -> teratas.
                                                                 $groupKeys = array_keys($groups);
                                                                 $groupKeys = array_reverse($groupKeys);
-                                                            @endphp
+                                                            ?>
 
                                                             <div style="margin-top:6px;">
-                                                                @foreach($groupKeys as $dateKey)
+                                                                <?php $__currentLoopData = $groupKeys; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dateKey): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                                     <div style="margin:10px 0 6px 0; font-weight:1000; font-size:12px; color:#1b1b18; line-height:1.1;">
-                                                                        {{ $formatDateLabel($dateKey) }}
+                                                                        <?php echo e($formatDateLabel($dateKey)); ?>
+
                                                                     </div>
 
                                                                     <table style="width:100%; max-width:100%; table-layout:fixed; border-collapse:collapse; border:1px solid rgba(2,6,23,0.12); border-radius:12px; overflow:hidden; background:#fff;">
@@ -234,9 +239,9 @@
                                                                         </thead>
 
                                                                         <tbody>
-                                                                            @php $idx = 1; @endphp
-                                                                            @foreach(array_reverse($groups[$dateKey]) as $event)
-                                                                                @php
+                                                                            <?php $idx = 1; ?>
+                                                                            <?php $__currentLoopData = array_reverse($groups[$dateKey]); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $event): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                                <?php
                                                                                     $ts = $event['timestamp'] ?? '';
                                                                                     $loc = $event['location']['address']['addressLocality'] ?? '-';
                                                                                     $desc = $event['description'] ?? '-';
@@ -246,30 +251,30 @@
                                                                                     if (is_string($ts) && strpos($ts, 'T') !== false) {
                                                                                         $timeText = substr($ts, 11, 5);
                                                                                     }
-                                                                                @endphp
+                                                                                ?>
                                                                                 <tr>
-                                                                                    <td style="text-align:center; padding:6px 4px; border-bottom:1px solid rgba(2,6,23,0.08); font-weight:1000; color:#1b1b18; font-size:11px; vertical-align:top;">{{ $idx }}</td>
-                                                                                    <td style="text-align:left; padding:6px 8px; border-bottom:1px solid rgba(2,6,23,0.08); color:#1b1b18; font-weight:800; font-size:11px; vertical-align:top; word-break:break-word; overflow-wrap:anywhere;">{{ $desc }}</td>
-                                                                                    <td style="text-align:left; padding:6px 8px; border-bottom:1px solid rgba(2,6,23,0.08); color:#54617a; font-weight:800; font-size:11px; vertical-align:top; word-break:break-word; overflow-wrap:anywhere;">{{ $loc }}</td>
-                                                                                    <td style="text-align:left; padding:6px 8px; border-bottom:1px solid rgba(2,6,23,0.08); color:#54617a; font-weight:800; font-size:11px; vertical-align:top; white-space:nowrap;">{{ $timeText }}</td>
+                                                                                    <td style="text-align:center; padding:6px 4px; border-bottom:1px solid rgba(2,6,23,0.08); font-weight:1000; color:#1b1b18; font-size:11px; vertical-align:top;"><?php echo e($idx); ?></td>
+                                                                                    <td style="text-align:left; padding:6px 8px; border-bottom:1px solid rgba(2,6,23,0.08); color:#1b1b18; font-weight:800; font-size:11px; vertical-align:top; word-break:break-word; overflow-wrap:anywhere;"><?php echo e($desc); ?></td>
+                                                                                    <td style="text-align:left; padding:6px 8px; border-bottom:1px solid rgba(2,6,23,0.08); color:#54617a; font-weight:800; font-size:11px; vertical-align:top; word-break:break-word; overflow-wrap:anywhere;"><?php echo e($loc); ?></td>
+                                                                                    <td style="text-align:left; padding:6px 8px; border-bottom:1px solid rgba(2,6,23,0.08); color:#54617a; font-weight:800; font-size:11px; vertical-align:top; white-space:nowrap;"><?php echo e($timeText); ?></td>
                                                                                 </tr>
-                                                                                @php $idx++; @endphp
-                                                                            @endforeach
+                                                                                <?php $idx++; ?>
+                                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                                         </tbody>
                                                                     </table>
-                                                                @endforeach
+                                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                             </div>
                                                             </div>
-                                                    @endif
+                                                    <?php endif; ?>
                                                 </div>
-                                            @endforeach
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </div>
                                 </div>
-                            @else
+                            <?php else: ?>
                                 <div style="background:#fff;border:1px dashed rgba(2,6,23,0.12);padding:14px;border-radius:14px;color:#54617a;font-weight:700;">
                                     Belum ada hasil tracking untuk nomor AWB ini.
                                 </div>
-                            @endif
+                            <?php endif; ?>
                         </div>
 
                         <div style="margin-top:12px;color:#54617a;font-weight:700; font-size:13px;">
@@ -280,4 +285,6 @@
             </div>
         </section>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\Website\expedition-app\resources\views/tracking.blade.php ENDPATH**/ ?>

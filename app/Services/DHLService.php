@@ -9,17 +9,27 @@ class DHLService
 {
     public function track($trackingNumber)
     {
-        $cacheKey = 'dhl:'.sha1($trackingNumber);
+        try {
+            $apiKey = env('DHL_API_KEY');
 
-        return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($trackingNumber) {
-            try {
-                $apiKey = env('DHL_API_KEY');
+            // Always use api-eu.dhl.com to match verified result from DHL endpoint
+            $primaryHost = 'https://api-eu.dhl.com';
+            $fallbackHost = 'https://api-eu.dhl.com';
 
-                // Choose host by env: tests and default expect api-eu.dhl.com
-                $host = env('DHL_USE_TEST_API', false) ? 'https://api-test.dhl.com' : 'https://api-eu.dhl.com';
+            $verify = ! (bool) env('DHL_IGNORE_SSL', false);
 
-                $verify = ! (bool) env('DHL_IGNORE_SSL', false);
+            $response = Http::withOptions([
+                'verify' => $verify,
+            ])->withHeaders([
+                'DHL-API-Key' => $apiKey,
+            ])
+                ->timeout(8)
+                ->retry(2, 100)
+                ->get($primaryHost.'/track/shipments', [
+                    'trackingNumber' => $trackingNumber,
+                ]);
 
+            if (! $response->successful()) {
                 $response = Http::withOptions([
                     'verify' => $verify,
                 ])->withHeaders([
@@ -27,29 +37,67 @@ class DHLService
                 ])
                     ->timeout(8)
                     ->retry(2, 100)
-                    ->get($host.'/track/shipments', [
+                    ->get($fallbackHost.'/track/shipments', [
                         'trackingNumber' => $trackingNumber,
                     ]);
+            }
 
-                if (! $response->successful()) {
-                    return ['error' => 'DHL API error', 'status' => $response->status(), 'body' => $response->body()];
+            if (! $response->successful()) {
+                $json = null;
+                try {
+                    $json = $response->json();
+                } catch (\Throwable $ignore) {
+                    $json = null;
                 }
 
-                return $response->json();
-            } catch (\Illuminate\Http\Client\RequestException $e) {
-                report($e);
-                $resp = method_exists($e, 'response') ? $e->response : null;
-
                 return [
-                    'error' => 'DHL API request failed',
-                    'status' => $resp ? $resp->status() : null,
-                    'body' => $resp ? $resp->body() : null,
+                    'courier' => 'dhl',
+                    'error' => 'Tidak dapat mengambil data pelacakan DHL saat ini',
+                    'status' => $response->status(),
+                    'raw' => [
+                        'body' => $response->body(),
+                        'json' => $json,
+                    ],
                 ];
-            } catch (\Throwable $e) {
-                report($e);
-
-                return ['error' => 'Terjadi kesalahan saat menghubungi DHL'];
             }
-        });
+
+            return $response->json();
+        } catch (\Illuminate\Http\Client\RequestException $e) {
+            report($e);
+
+            $resp = method_exists($e, 'response') ? $e->response : null;
+
+            $json = null;
+            $body = null;
+            $status = null;
+
+            if ($resp) {
+                $status = $resp->status();
+                $body = $resp->body();
+
+                try {
+                    $json = $resp->json();
+                } catch (\Throwable $ignore) {
+                    $json = null;
+                }
+            }
+
+            return [
+                'courier' => 'dhl',
+                'error' => 'Tidak dapat mengambil data pelacakan DHL saat ini',
+                'status' => $status,
+                'raw' => [
+                    'body' => $body,
+                    'json' => $json,
+                ],
+            ];
+        } catch (\Throwable $e) {
+            report($e);
+
+            return [
+                'courier' => 'dhl',
+                'error' => 'Tidak dapat mengambil data pelacakan DHL saat ini',
+            ];
+        }
     }
 }

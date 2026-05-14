@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', config('app.name') . ' — Ekspedisi Luar Negeri')
-@section('meta_description', 'Rai Raka Express — jasa ekspedisi internasional dan jasa kirim barang luar negeri. Cargo internasional murah, pengiriman door to door internasional, dan Rai Raka Express tracking untuk ekspedisi Indonesia ke Jepang.')
+@section('meta_description', 'Rai Raka Express menyediakan jasa ekspedisi internasional door-to-door ke luar negeri, termasuk Jepang. Dapatkan harga kompetitif dan tracking real-time.')
 @section('meta_keywords', 'jasa ekspedisi internasional, jasa kirim barang luar negeri, cargo internasional murah, pengiriman barang ke Jepang, ekspedisi Indonesia Jepang, jasa import export terpercaya, pengiriman door to door internasional, jasa kirim paket cepat luar negeri, cargo udara internasional, jasa pengiriman barang UMKM export, Rai Raka Express, Rai Raka Express cargo, Rai Raka Express Jepang, Rai Raka Express tracking, Rai Raka Express ekspedisi internasional, Rai Raka Express pengiriman luar negeri')
 
 @section('content')
@@ -36,7 +36,7 @@
                                     id="tracking_number_welcome"
                                     type="text"
                                     name="tracking_number"
-                                    placeholder="Contoh: 1234567890 / 123456789012"
+                                    placeholder="Contoh: 1234567890"
                                     required
                                     maxlength="12"
                                     pattern="(\d{10}|\d{12})"
@@ -63,7 +63,7 @@
                     <a href="{{ url('/services') }}" class="btn-outline" style="border:2px solid rgba(2,6,23,0.08); padding:12px 14px; border-radius:12px; font-weight:800;">
                         Lihat Layanan
                     </a>
-                    <a href="{{ url('/contact') }}" class="btn-outline" style="border:2px solid rgba(11,93,167,0.18); padding:12px 14px; border-radius:12px; font-weight:800; color:var(--brand-blue);">
+                    <a href="{{ url('/contact') }}" class="btn-outline" style="border:2px solid rgba(2,6,23,0.08); padding:12px 14px; border-radius:12px; font-weight:900; background:transparent; color:#000; text-decoration:none;">
                         Butuh Bantuan?
                     </a>
                 </div>

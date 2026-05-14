@@ -1,15 +1,12 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TrackingController;
 
 Route::prefix('tracking')->group(function () {
 
-    Route::get('/', [
-        TrackingController::class,
-        'index'
-    ]);
+    Route::get('/', [TrackingController::class, 'index']);
 
-    Route::post('/check', [
-        TrackingController::class,
-        'track'
-    ]);
+    Route::post('/check', [TrackingController::class, 'track']);
 
 });
