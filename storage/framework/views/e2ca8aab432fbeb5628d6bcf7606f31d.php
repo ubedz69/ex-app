@@ -1,6 +1,11 @@
-<?php $__env->startSection('title', config('app.name') . ' | Jasa Pengiriman Keluar Negeri'); ?>
-<?php $__env->startSection('meta_description', 'Rai Raka Express melayani ekspedisi internasional ke luar negeri, termasuk pengiriman ke Jepang. Lacak paket cepat dan dapatkan status real-time.'); ?>
+<?php $__env->startSection('title', 'Jasa Export Import Indonesia | Rai Raka Express'); ?>
+<?php $__env->startSection('meta_description', 'Rai Raka Express melayani jasa export import, pengiriman internasional, dokumentasi export, dan cargo terpercaya dari Indonesia.'); ?>
 <?php $__env->startSection('meta_keywords', 'jasa ekspedisi internasional, jasa kirim barang luar negeri, cargo internasional murah, pengiriman barang ke Jepang, ekspedisi Indonesia Jepang, jasa import export terpercaya, pengiriman door to door internasional, jasa kirim paket cepat luar negeri, cargo udara internasional, jasa pengiriman barang UMKM export, Rai Raka Express, Rai Raka Express cargo, Rai Raka Express Jepang, Rai Raka Express tracking, Rai Raka Express ekspedisi internasional, Rai Raka Express pengiriman luar negeri'); ?>
+
+<?php $__env->startPush('head'); ?>
+    <meta name="facebook-domain-verification" content="e9ls3u4g2mud7ql312dbgimsnxfvil" />
+    <meta name="google-site-verification" content="HOE3NzPZKAvcOgH1gcFl-3-DJt7QAb_Cv7fwkN0LKII" />
+<?php $__env->stopPush(); ?>
 
 <?php $__env->startSection('content'); ?>
 <div class="container">

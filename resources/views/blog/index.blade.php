@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Blog — '.config('app.name'))
-@section('meta_description', 'Blog Rai Raka Express')
-@section('meta_keywords', 'blog')
+@section('title', 'Jasa Export Import Indonesia | Rai Raka Express')
+@section('meta_description', 'Rai Raka Express melayani jasa export import, pengiriman internasional, dokumentasi export, dan cargo terpercaya dari Indonesia.')
+@section('meta_keywords', 'jasa export import, pengiriman internasional, dokumentasi export, cargo terpercaya, Rai Raka Express')
 
 @section('content')
 <div class="container">

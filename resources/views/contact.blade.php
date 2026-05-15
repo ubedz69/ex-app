@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Contact — '.config('app.name'))
-@section('meta_description', 'Hubungi Rai Raka Express untuk kebutuhan ekspedisi internasional. Dapatkan penawaran pengiriman door-to-door ke luar negeri, termasuk Jepang, dengan proses cepat dan mudah dilacak.')
+@section('title', 'Jasa Export Import Indonesia | Rai Raka Express')
+@section('meta_description', 'Rai Raka Express melayani jasa export import, pengiriman internasional, dokumentasi export, dan cargo terpercaya dari Indonesia.')
 @section('meta_keywords', 'jasa ekspedisi internasional, jasa kirim barang luar negeri, cargo internasional murah, pengiriman barang ke Jepang, ekspedisi Indonesia Jepang, jasa import export terpercaya, pengiriman door to door internasional, jasa kirim paket cepat luar negeri, cargo udara internasional, jasa pengiriman barang UMKM export, Rai Raka Express, Rai Raka Express cargo, Rai Raka Express Jepang, Rai Raka Express tracking, Rai Raka Express ekspedisi internasional, Rai Raka Express pengiriman luar negeri')
 
 @section('content')

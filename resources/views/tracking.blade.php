@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Tracking Paket — ' . config('app.name'))
+@section('title', 'Jasa Export Import Indonesia | Rai Raka Express')
 
-@section('meta_description', 'Lacak paket internasional Rai Raka Express secara real-time menggunakan nomor AWB. Cek status pengiriman cepat dan akurat.')
+@section('meta_description', 'Rai Raka Express melayani jasa export import, pengiriman internasional, dokumentasi export, dan cargo terpercaya dari Indonesia.')
 @section('meta_keywords', 'jasa ekspedisi internasional, jasa kirim barang luar negeri, cargo internasional murah, pengiriman barang ke Jepang, ekspedisi Indonesia Jepang, jasa import export terpercaya, pengiriman door to door internasional, jasa kirim paket cepat luar negeri, cargo udara internasional, jasa pengiriman barang UMKM export, Rai Raka Express, Rai Raka Express cargo, Rai Raka Express Jepang, Rai Raka Express tracking, Rai Raka Express ekspedisi internasional, Rai Raka Express pengiriman luar negeri')
 
 @section('content')
