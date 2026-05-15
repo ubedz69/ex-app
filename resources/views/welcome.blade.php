@@ -39,11 +39,13 @@
                                     placeholder="Contoh: 1234567890"
                                     required
                                     maxlength="12"
-                                    pattern="(\d{10}|\d{12})"
+                                    pattern="[0-9]{0,12}"
                                     inputmode="numeric"
                                     title="Masukkan nomor resi (angka saja)"
                                     class="input"
                                     style="padding:14px 16px;border-radius:12px;border:2px solid rgba(11,93,167,0.15);"
+                                    oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                                    onpaste="event.preventDefault(); const t=(event.clipboardData||window.clipboardData).getData('text'); const d=(t||'').replace(/[^0-9]/g,'').slice(0,12); document.getElementById('tracking_number_welcome').value=d;"
                                 >
                                 <div class="site-footer" style="border-top:none;padding:8px 0;margin-top:6px;color:#54617a;">
                                     Tips: tanpa spasi, tanpa tanda baca.
@@ -176,7 +178,7 @@
             <p style="margin:0 0 12px 0; opacity:0.95; font-weight:700;">Dapatkan solusi ekspedisi dan pelacakan yang rapi.</p>
             <div style="display:flex;gap:10px;flex-wrap:wrap; justify-content:center;">
                 <a href="{{ url('/contact') }}" class="btn-outline" style="border:2px solid rgba(255,255,255,0.65); padding:12px 16px; border-radius:12px; font-weight:900; background:rgba(255,255,255,0.08); color:#fff; text-decoration:none;">
-                    Hubungi Sales
+                    Hubungi Kami
                 </a>
                 <a href="{{ url('/tracking') }}" class="btn-outline" style="border:2px solid rgba(255,255,255,0.65); padding:12px 16px; border-radius:12px; font-weight:900; background:rgba(255,255,255,0.08); color:#fff; text-decoration:none;">
                     Buka Tracking

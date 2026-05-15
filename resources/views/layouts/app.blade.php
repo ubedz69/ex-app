@@ -63,12 +63,26 @@
             </nav>
 
             <div class="header-actions" style="display:flex;align-items:center;gap:12px">
-                <form action="{{ url('/tracking') }}" method="GET" class="inline-track-form" style="display:flex;gap:8px;align-items:center" role="search" aria-label="Search tracking">
-                    <label for="header-tracking" class="sr-only">Nomor resi</label>
-                    <input id="header-tracking" type="search" name="tracking_number" placeholder="Masukkan nomor AWB" class="input" style="width:220px;padding:8px 10px;" aria-describedby="header-track-help" maxlength="12" pattern="(\d{10}|\d{12})" inputmode="numeric" title="Masukkan 10 atau 12 nomor AWB">
-                    <span id="header-track-help" class="sr-only">Masukkan nomor AWB lalu tekan Track</span>
-                    <button type="submit" class="btn" style="padding:8px 12px">Track</button>
-                </form>
+                    <form action="{{ url('/tracking') }}" method="GET" class="inline-track-form" style="display:flex;gap:8px;align-items:center" role="search" aria-label="Search tracking">
+                        <label for="header-tracking" class="sr-only">Nomor resi</label>
+                        <input
+                            id="header-tracking"
+                            type="search"
+                            name="tracking_number"
+                            placeholder="Masukkan nomor AWB"
+                            class="input"
+                            style="width:220px;padding:8px 10px;"
+                            aria-describedby="header-track-help"
+                            maxlength="12"
+                            pattern="[0-9]{0,12}"
+                            inputmode="numeric"
+                            title="Masukkan 10 atau 12 nomor AWB (angka saja)"
+                            oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                            onpaste="event.preventDefault(); const t=(event.clipboardData||window.clipboardData).getData('text'); const d=(t||'').replace(/[^0-9]/g,'').slice(0,12); document.getElementById('header-tracking').value=d;"
+                        >
+                        <span id="header-track-help" class="sr-only">Masukkan nomor AWB lalu tekan Track</span>
+                        <button type="submit" class="btn" style="padding:8px 12px">Track</button>
+                    </form>
 
                 <a href="{{ url('/services') }}" class="btn btn-outline" style="background:transparent;color:#000;border:1px solid rgba(2,6,23,0.08);text-decoration:none;">Get a Quote</a>
             </div>

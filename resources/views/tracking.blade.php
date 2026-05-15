@@ -48,11 +48,13 @@
                                     placeholder="Contoh: 1234567890"
                                     required
                                     maxlength="12"
-                                    pattern="(\d{10}|\d{12})"
+                                    pattern="[0-9]{0,12}"
                                     inputmode="numeric"
                                     title="Nomor resi angka saja"
                                     class="input"
                                     style="padding:14px 16px;border-radius:12px;border:2px solid rgba(11,93,167,0.18);font-weight:800;"
+                                    oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                                    onpaste="event.preventDefault(); const t=(event.clipboardData||window.clipboardData).getData('text'); const d=(t||'').replace(/[^0-9]/g,'').slice(0,12); document.getElementById('tracking_number').value=d;"
                                 >
                                 <div class="site-footer" style="border-top:none;padding:8px 0;margin-top:6px;color:#54617a;">
                                     Tips: hanya angka, tanpa spasi/tanda baca.

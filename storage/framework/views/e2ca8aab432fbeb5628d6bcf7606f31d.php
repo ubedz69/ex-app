@@ -12,13 +12,32 @@
             <form action="<?php echo e(url('/tracking')); ?>" method="POST" class="tracking-form" novalidate>
                 <?php echo csrf_field(); ?>
                 <div class="form-row">
-                    <input name="tracking_number" id="tracking_number" placeholder="Masukkan nomor AWB" required maxlength="12" pattern="(\d{10}|\d{12})" inputmode="numeric" title="Masukkan nomor AWB" class="input" aria-label="Nomor AWB">
+                    <input
+                        name="tracking_number"
+                        id="tracking_number"
+                        placeholder="Masukkan nomor AWB"
+                        required
+                        maxlength="12"
+                        pattern="[0-9]{0,12}"
+                        inputmode="numeric"
+                        title="Masukkan nomor AWB (angka saja)"
+                        class="input"
+                        aria-label="Nomor AWB"
+                        oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                        onpaste="event.preventDefault(); const t=(event.clipboardData||window.clipboardData).getData('text'); const d=(t||'').replace(/[^0-9]/g,'').slice(0,12); document.getElementById('tracking_number').value=d;"
+                    >
                     <button class="btn" type="submit">Cek Sekarang</button>
                 </div>
             </form>
 
             <div class="mt-4">
-                <a href="<?php echo e(url('/contact')); ?>" class="btn btn-outline" style="background:transparent;color:#000;border:2px solid rgba(2,6,23,0.08);text-decoration:none;padding:12px 14px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-weight:900;min-height:44px;white-space:nowrap;">Butuh Bantuan? Hubungi Kami</a>
+                <a
+                    href="<?php echo e(url('/contact')); ?>"
+                    class="btn btn-outline"
+                    style="background:transparent;color:#000;border:2px solid rgba(2,6,23,0.08);text-decoration:none;padding:14px 16px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;min-height:44px;white-space:nowrap;width:100%;box-sizing:border-box;"
+                >
+                    Butuh Bantuan? Hubungi Kami
+                </a>
             </div>
         </div>
 
@@ -76,7 +95,7 @@
     <section class="site-cta">
         <h3 style="margin:0 0 8px 0;">Siap Mengirimkan Barang Anda?</h3>
         <p style="margin:0 0 12px 0;opacity:0.95">Dapatkan layanan cepat dan terpercaya. Hubungi kami untuk penawaran khusus atau gunakan fitur cek resi sekarang.</p>
-        <a href="<?php echo e(url('/contact')); ?>" class="btn">Hubungi Sales</a>
+        <a href="<?php echo e(url('/contact')); ?>" class="btn">Hubungi Kami</a>
     </section>
 </div>
 <?php $__env->stopSection(); ?>
