@@ -20,26 +20,45 @@ Route::get('/contact', [PageController::class, 'contact']);
 Route::post('/contact', [PageController::class, 'submitContact']);
 
 Route::get('/generate-sitemap', function () {
+    $baseUrl = 'https://rairakaexpress.com';
+
     Sitemap::create()
         ->add(
-            Url::create('/')
+            Url::create($baseUrl . '/')
                 ->setPriority(1.0)
+                ->setChangeFrequency('daily')
         )
         ->add(
-            Url::create('/tracking')
+            Url::create($baseUrl . '/about')
+                ->setPriority(0.7)
+                ->setChangeFrequency('monthly')
+        )
+        ->add(
+            Url::create($baseUrl . '/services')
+                ->setPriority(0.8)
+                ->setChangeFrequency('monthly')
+        )
+        ->add(
+            Url::create($baseUrl . '/contact')
+                ->setPriority(0.6)
+                ->setChangeFrequency('monthly')
+        )
+        ->add(
+            Url::create($baseUrl . '/tracking')
                 ->setPriority(0.9)
+                ->setChangeFrequency('daily')
         )
         ->add(
-            Url::create('/cek-resi-dhl')
-                ->setPriority(0.8)
+            Url::create($baseUrl . '/blog')
+                ->setPriority(0.7)
+                ->setChangeFrequency('weekly')
         )
         ->add(
-            Url::create('/cek-resi-fedex')
-                ->setPriority(0.8)
+            Url::create($baseUrl . '/blog/create')
+                ->setPriority(0.1)
+                ->setChangeFrequency('monthly')
         )
-        ->writeToFile(
-            public_path('sitemap.xml')
-        );
+        ->writeToFile(public_path('sitemap.xml'));
 
-    return 'Sitemap generated!';
+    return 'Sitemap generated for ' . $baseUrl;
 });
