@@ -43,6 +43,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Minify HTML Output
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, HTML responses will be minified before being sent to the
+    | browser. This only affects frontend readability, not backend security.
+    |
+    */
+    'minify_html' => (bool) env('APP_MINIFY_HTML', false),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application URL
     |--------------------------------------------------------------------------
     |
