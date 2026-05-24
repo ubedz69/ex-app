@@ -19,10 +19,10 @@
 /public/hot
 /public/storage
 /storage/*.key
+/storage/framework/views/*.php
 /storage/pail
 /vendor
 _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
-storage/logs/fedex_raw_871533663480.json

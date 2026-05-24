@@ -1,12 +1,15 @@
 <?php
 
 use App\Services\DHLService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 uses(TestCase::class);
 
 test('dhl service returns tracking data', function () {
+    Cache::flush();
+
     Http::fake([
         'https://api-eu.dhl.com/track/shipments*' => Http::response(['shipments' => []], 200),
         'https://api-test.dhl.com/track/shipments*' => Http::response(['shipments' => []], 200),
@@ -20,8 +23,11 @@ test('dhl service returns tracking data', function () {
 });
 
 test('dhl service returns error when api fails', function () {
+    Cache::flush();
+
     Http::fake([
         'https://api-eu.dhl.com/track/shipments*' => Http::response('error', 500),
+        'https://api-test.dhl.com/track/shipments*' => Http::response('error', 500),
     ]);
 
     $service = new DHLService;

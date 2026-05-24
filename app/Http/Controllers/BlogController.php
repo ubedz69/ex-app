@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
     private const STORAGE_FILE = 'blog-posts.json';
 
-    public function index()
+    public function index(): View
     {
         $posts = $this->loadPosts();
 
@@ -18,12 +21,12 @@ class BlogController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(): View
     {
         return view('blog.create');
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
             'title' => 'required|string|max:255',
@@ -31,9 +34,7 @@ class BlogController extends Controller
             'content' => 'required|string',
         ]);
 
-        $posts = $this->loadPosts();
-
-        $posts[] = [
+        $post = [
             'id' => $this->makeId(),
             'title' => $data['title'],
             'summary' => $data['summary'],
@@ -41,7 +42,21 @@ class BlogController extends Controller
             'created_at' => now()->toDateTimeString(),
         ];
 
-        $this->savePosts($posts);
+        try {
+            Cache::lock('blog-posts-write', 10)->block(5, function () use ($post): void {
+                $posts = $this->loadPosts();
+                $posts[] = $post;
+
+                $this->savePosts($posts);
+            });
+        } catch (\Throwable $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors(['blog' => 'Gagal menyimpan post. Silakan coba lagi.']);
+        }
 
         return redirect()->to('/blog')->with('status', 'Blog berhasil diposting.');
     }
@@ -57,7 +72,7 @@ class BlogController extends Controller
 
     private function loadPosts(): array
     {
-        if (!Storage::disk('local')->exists(self::STORAGE_FILE)) {
+        if (! Storage::disk('local')->exists(self::STORAGE_FILE)) {
             return [];
         }
 

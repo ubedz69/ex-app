@@ -3,18 +3,35 @@
 namespace App\Services;
 
 use App\Services\Fedex\FedexService as InternalFedexService;
+use App\Services\Fedex\FedexTransformer;
 
 class FedexService
 {
     /**
      * Backward-compatible wrapper so older imports (App\Services\FedexService)
-     * use the normalized implementation under App\Services\Fedex\FedexService.
+     * keep returning the UI-friendly normalized payload used by tracking.blade.php.
      *
-     * @param string $trackingNumber
      * @return array<string,mixed>
      */
-    public function track($trackingNumber): array
+    public function track(string $trackingNumber): array
     {
-        return (new InternalFedexService())->track($trackingNumber);
+        $rawResponse = $this->trackRaw($trackingNumber);
+
+        if (isset($rawResponse['error'])) {
+            return $rawResponse;
+        }
+
+        return (new FedexTransformer)->transformTrack($rawResponse);
+    }
+
+    /**
+     * Returns the FedEx-like raw response shape:
+     * transactionId, customerTransactionId, output.completeTrackResults.
+     *
+     * @return array<string,mixed>
+     */
+    public function trackRaw(string $trackingNumber): array
+    {
+        return (new InternalFedexService)->track($trackingNumber);
     }
 }

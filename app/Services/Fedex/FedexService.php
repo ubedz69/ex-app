@@ -2,31 +2,32 @@
 
 namespace App\Services\Fedex;
 
-use App\Services\Fedex\FedexTransformer;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class FedexService
 {
-    public function track($trackingNumber)
+    /**
+     * @return array<string, mixed>
+     */
+    public function track(string $trackingNumber): array
     {
-        if (config('app.env') === 'testing') {
+        if (app()->environment('testing')) {
             return $this->trackWithoutCache($trackingNumber);
         }
 
         $cacheKey = 'fedex:'.sha1($trackingNumber);
 
-        return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($trackingNumber) {
+        return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($trackingNumber): array {
             return $this->trackWithoutCache($trackingNumber);
         });
     }
 
     /**
-     * @param string $trackingNumber
-     * @return array<string,mixed>
+     * @return array<string, mixed>
      */
-    private function trackWithoutCache($trackingNumber): array
+    private function trackWithoutCache(string $trackingNumber): array
     {
         try {
             $token = $this->getToken();
@@ -35,7 +36,7 @@ class FedexService
                 return ['error' => 'Tidak dapat memperoleh token FedEx'];
             }
 
-            $verify = ! (bool) env('FEDEX_IGNORE_SSL', false);
+            $verify = ! (bool) config('services.fedex.ignore_ssl', false);
 
             $response = Http::withToken($token)
                 ->timeout(5)
@@ -62,15 +63,6 @@ class FedexService
 
             $fedexJson = $response->json();
 
-            if ((string) $trackingNumber === '871533663480') {
-                try {
-                    $dumpPath = storage_path('logs/fedex_raw_871533663480.json');
-                    file_put_contents($dumpPath, json_encode($fedexJson, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-                } catch (\Throwable $e) {
-                    // ignore dump failures
-                }
-            }
-
             if (is_object($fedexJson)) {
                 $fedexJson = (array) $fedexJson;
             }
@@ -79,7 +71,7 @@ class FedexService
                 return ['error' => 'Unexpected FedEx response format'];
             }
 
-            return (new FedexTransformer())->transformTrack($fedexJson);
+            return $this->normalizeTrackResponse($fedexJson);
         } catch (\Throwable $e) {
             report($e);
 
@@ -87,18 +79,10 @@ class FedexService
         }
     }
 
-    private function getToken()
+    private function getToken(): ?string
     {
-        $debugPath = storage_path('logs/fedex_debug_runtime.log');
-
         try {
-            $verify = ! (bool) env('FEDEX_IGNORE_SSL', false);
-
-            file_put_contents(
-                $debugPath,
-                '['.date('c').'] fedex_token_request start verify='.(string) $verify.' ignoreSSL='.(string) env('FEDEX_IGNORE_SSL').PHP_EOL,
-                FILE_APPEND
-            );
+            $verify = ! (bool) config('services.fedex.ignore_ssl', false);
 
             $response = Http::asForm()
                 ->timeout(5)
@@ -109,48 +93,86 @@ class FedexService
                     'https://apis.fedex.com/oauth/token',
                     [
                         'grant_type' => 'client_credentials',
-                        'client_id' => env('FEDEX_API_KEY'),
-                        'client_secret' => env('FEDEX_SECRET_KEY'),
+                        'client_id' => (string) config('services.fedex.key'),
+                        'client_secret' => (string) config('services.fedex.secret'),
                     ]
                 );
 
-            file_put_contents(
-                $debugPath,
-                '['.date('c').'] fedex_token_http status='.$response->status().' body='.substr((string) $response->body(), 0, 2000).PHP_EOL,
-                FILE_APPEND
-            );
-
             if (! $response->successful()) {
+                Log::warning('FedEx token request failed', [
+                    'status' => $response->status(),
+                ]);
+
                 return null;
             }
 
             $data = $response->json();
 
             if (! isset($data['access_token']) || empty($data['access_token'])) {
-                file_put_contents(
-                    $debugPath,
-                    '['.date('c').'] fedex_token_missing access_token_present='.(isset($data['access_token']) ? 'yes' : 'no').PHP_EOL,
-                    FILE_APPEND
-                );
+                Log::warning('FedEx token missing access_token key');
 
                 return null;
             }
 
-            file_put_contents(
-                $debugPath,
-                '['.date('c').'] fedex_token_success received access_token'.PHP_EOL,
-                FILE_APPEND
-            );
-
             return $data['access_token'];
         } catch (\Throwable $e) {
-            file_put_contents(
-                $debugPath,
-                '['.date('c').'] fedex_token_exception class='.get_class($e).' message='.(string) $e->getMessage().PHP_EOL,
-                FILE_APPEND
-            );
+            report($e);
 
             return null;
         }
+    }
+
+    /**
+     * @param  array<string, mixed>  $fedexJson
+     * @return array<string, mixed>
+     */
+    private function normalizeTrackResponse(array $fedexJson): array
+    {
+        $output = $fedexJson['output'] ?? [];
+        if (! is_array($output)) {
+            $output = [];
+        }
+
+        $completeTrackResults = $output['completeTrackResults'] ?? [];
+        if (! is_array($completeTrackResults)) {
+            $completeTrackResults = [];
+        }
+
+        $normalizedCompleteTrackResults = [];
+
+        foreach ($completeTrackResults as $completeTrackResult) {
+            if (! is_array($completeTrackResult)) {
+                continue;
+            }
+
+            $trackResults = $completeTrackResult['trackResults'] ?? [];
+            if (! is_array($trackResults)) {
+                $trackResults = [];
+            }
+
+            $normalizedTrackResults = [];
+
+            foreach ($trackResults as $trackResult) {
+                if (is_array($trackResult)) {
+                    $normalizedTrackResults[] = $trackResult;
+                }
+            }
+
+            $normalizedCompleteTrackResults[] = [
+                'trackingNumber' => $completeTrackResult['trackingNumber'] ?? null,
+                'trackResults' => $normalizedTrackResults,
+            ];
+        }
+
+        $output['completeTrackResults'] = $normalizedCompleteTrackResults;
+        $output['alerts'] = $output['alerts'] ?? null;
+
+        $fedexJson['transactionId'] = (string) ($fedexJson['transactionId'] ?? '');
+        $fedexJson['customerTransactionId'] = isset($fedexJson['customerTransactionId'])
+            ? (string) $fedexJson['customerTransactionId']
+            : '';
+        $fedexJson['output'] = $output;
+
+        return $fedexJson;
     }
 }

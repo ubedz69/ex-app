@@ -27,11 +27,15 @@ final class FedexTransformer
      *           'description' => string|null,
      *         ],
      *       ],
+     *       'shipmentPeriod' => [
+     *         'start' => string|null,
+     *         'end' => string|null,
+     *       ],
      *     ],
      *   ],
      * ]
      *
-     * @param array<string,mixed> $fedexJson
+     * @param  array<string,mixed>  $fedexJson
      * @return array<string,mixed>
      */
     public function transformTrack(array $fedexJson): array
@@ -84,7 +88,7 @@ final class FedexTransformer
     }
 
     /**
-     * @param array<string,mixed> $trackResult
+     * @param  array<string,mixed>  $trackResult
      * @return array<string,mixed>
      */
     private function transformTrackResult(array $trackResult): array
@@ -127,16 +131,26 @@ final class FedexTransformer
             $events[] = $this->transformScanEvent($event);
         }
 
+        $shipmentPeriod = $this->extractShipmentPeriod($trackResult, $events);
+
         // Ensure timeline order: earliest -> latest
         usort($events, function (array $a, array $b): int {
             $ta = $a['timestamp'] ?? '';
             $tb = $b['timestamp'] ?? '';
 
-            if (! is_string($ta)) $ta = '';
-            if (! is_string($tb)) $tb = '';
+            if (! is_string($ta)) {
+                $ta = '';
+            }
+            if (! is_string($tb)) {
+                $tb = '';
+            }
 
             return strcmp($ta, $tb);
         });
+
+        if (($status['timestamp'] ?? null) === null) {
+            $status['timestamp'] = $shipmentPeriod['end'] ?? $shipmentPeriod['start'];
+        }
 
         return [
             'id' => is_string($trackingNumber) ? $trackingNumber : (isset($trackingNumber) ? (string) $trackingNumber : null),
@@ -144,6 +158,7 @@ final class FedexTransformer
             'origin' => $origin,
             'status' => $status,
             'events' => $events,
+            'shipmentPeriod' => $shipmentPeriod,
         ];
     }
 
@@ -156,7 +171,7 @@ final class FedexTransformer
      * - scanLocation: { city, stateOrProvinceCode, ... }
      * - date/timestamp is not always present; we keep null if missing.
      *
-     * @param array<string,mixed> $latestStatusDetail
+     * @param  array<string,mixed>  $latestStatusDetail
      * @return array<string,mixed>
      */
     private function transformLatestStatusDetail(array $latestStatusDetail): array
@@ -183,7 +198,7 @@ final class FedexTransformer
      * - scanLocation:
      *    - city: "SEATTLE"
      *
-     * @param array<string,mixed> $event
+     * @param  array<string,mixed>  $event
      * @return array<string,mixed>
      */
     private function transformScanEvent(array $event): array
@@ -232,7 +247,7 @@ final class FedexTransformer
      * - stateOrProvinceCode
      * etc
      *
-     * @param array<string,mixed>|null $fedexAddress
+     * @param  array<string,mixed>|null  $fedexAddress
      * @return array<string,mixed>
      */
     private function extractAddressTreeFromFedexLocation(mixed $fedexAddress): array
@@ -251,5 +266,134 @@ final class FedexTransformer
 
         // Sometimes address could be nested or provide locality-like fields
         return ['address' => ['addressLocality' => null]];
+    }
+
+    /**
+     * @param  array<string,mixed>  $trackResult
+     * @param  array<int,array<string,mixed>>  $events
+     * @return array{start: string|null, end: string|null}
+     */
+    private function extractShipmentPeriod(array $trackResult, array $events): array
+    {
+        $startCandidates = [];
+        $endCandidates = [];
+
+        $dateAndTimes = $trackResult['dateAndTimes'] ?? [];
+        if (is_array($dateAndTimes)) {
+            foreach ($dateAndTimes as $item) {
+                if (! is_array($item)) {
+                    continue;
+                }
+
+                $dateTime = $this->toNullableString($item['dateTime'] ?? null);
+                if ($dateTime === null) {
+                    continue;
+                }
+
+                $type = strtoupper((string) ($item['type'] ?? ''));
+
+                if (str_contains($type, 'DELIVERY')) {
+                    $endCandidates[] = $dateTime;
+                } elseif (str_contains($type, 'PICKUP') || str_contains($type, 'SHIP') || str_contains($type, 'TENDER')) {
+                    $startCandidates[] = $dateTime;
+                } else {
+                    $startCandidates[] = $dateTime;
+                }
+            }
+        }
+
+        $estimatedWindow = $trackResult['estimatedDeliveryTimeWindow']['window'] ?? null;
+        if (is_array($estimatedWindow)) {
+            $estimatedBegins = $this->toNullableString($estimatedWindow['begins'] ?? null);
+            $estimatedEnds = $this->toNullableString($estimatedWindow['ends'] ?? null);
+
+            if ($estimatedBegins !== null) {
+                $startCandidates[] = $estimatedBegins;
+            }
+            if ($estimatedEnds !== null) {
+                $endCandidates[] = $estimatedEnds;
+            }
+        }
+
+        $standardWindow = $trackResult['standardTransitTimeWindow']['window'] ?? null;
+        if (is_array($standardWindow)) {
+            $standardBegins = $this->toNullableString($standardWindow['begins'] ?? null);
+            $standardEnds = $this->toNullableString($standardWindow['ends'] ?? null);
+
+            if ($standardBegins !== null) {
+                $startCandidates[] = $standardBegins;
+            }
+            if ($standardEnds !== null) {
+                $endCandidates[] = $standardEnds;
+            }
+        }
+
+        $eventTimestamps = array_values(array_filter(array_map(
+            fn (array $event): ?string => $this->toNullableString($event['timestamp'] ?? null),
+            $events
+        )));
+
+        if (count($eventTimestamps) > 0) {
+            sort($eventTimestamps);
+
+            $startCandidates[] = $eventTimestamps[0];
+            $endCandidates[] = $eventTimestamps[count($eventTimestamps) - 1];
+        }
+
+        return [
+            'start' => $this->pickEarliest($startCandidates),
+            'end' => $this->pickLatest($endCandidates),
+        ];
+    }
+
+    /**
+     * @param  array<int,mixed>  $values
+     */
+    private function pickEarliest(array $values): ?string
+    {
+        $normalized = array_values(array_filter(array_map(
+            fn (mixed $value): ?string => $this->toNullableString($value),
+            $values
+        )));
+
+        if (count($normalized) === 0) {
+            return null;
+        }
+
+        sort($normalized);
+
+        return $normalized[0];
+    }
+
+    /**
+     * @param  array<int,mixed>  $values
+     */
+    private function pickLatest(array $values): ?string
+    {
+        $normalized = array_values(array_filter(array_map(
+            fn (mixed $value): ?string => $this->toNullableString($value),
+            $values
+        )));
+
+        if (count($normalized) === 0) {
+            return null;
+        }
+
+        sort($normalized);
+
+        return $normalized[count($normalized) - 1];
+    }
+
+    private function toNullableString(mixed $value): ?string
+    {
+        if (is_string($value) && trim($value) !== '') {
+            return $value;
+        }
+
+        if (is_numeric($value)) {
+            return (string) $value;
+        }
+
+        return null;
     }
 }

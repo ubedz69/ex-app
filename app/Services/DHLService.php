@@ -2,102 +2,97 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 class DHLService
 {
-    public function track($trackingNumber)
+    /**
+     * @return array<string, mixed>
+     */
+    public function track(string $trackingNumber): array
     {
-        try {
-            $apiKey = env('DHL_API_KEY');
+        $cacheKey = 'dhl:'.sha1($trackingNumber);
 
-            // Always use api-eu.dhl.com to match verified result from DHL endpoint
-            $primaryHost = 'https://api-eu.dhl.com';
-            $fallbackHost = 'https://api-eu.dhl.com';
+        return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($trackingNumber): array {
+            try {
+                $apiKey = (string) config('services.dhl.key');
+                $verify = ! (bool) config('services.dhl.ignore_ssl', false);
+                $primaryHost = rtrim((string) config('services.dhl.base_url', 'https://api-eu.dhl.com'), '/');
+                $fallbackHost = rtrim((string) config('services.dhl.fallback_base_url', 'https://api-test.dhl.com'), '/');
 
-            $verify = ! (bool) env('DHL_IGNORE_SSL', false);
+                $response = $this->requestTracking(
+                    host: $primaryHost,
+                    apiKey: $apiKey,
+                    verify: $verify,
+                    trackingNumber: $trackingNumber
+                );
 
-            $response = Http::withOptions([
-                'verify' => $verify,
-            ])->withHeaders([
-                'DHL-API-Key' => $apiKey,
-            ])
-                ->timeout(8)
-                ->retry(2, 100)
-                ->get($primaryHost.'/track/shipments', [
-                    'trackingNumber' => $trackingNumber,
-                ]);
-
-            if (! $response->successful()) {
-                $response = Http::withOptions([
-                    'verify' => $verify,
-                ])->withHeaders([
-                    'DHL-API-Key' => $apiKey,
-                ])
-                    ->timeout(8)
-                    ->retry(2, 100)
-                    ->get($fallbackHost.'/track/shipments', [
-                        'trackingNumber' => $trackingNumber,
-                    ]);
-            }
-
-            if (! $response->successful()) {
-                $json = null;
-                try {
-                    $json = $response->json();
-                } catch (\Throwable $ignore) {
-                    $json = null;
+                if (! $response->successful() && $fallbackHost !== $primaryHost) {
+                    $response = $this->requestTracking(
+                        host: $fallbackHost,
+                        apiKey: $apiKey,
+                        verify: $verify,
+                        trackingNumber: $trackingNumber
+                    );
                 }
+
+                if (! $response->successful()) {
+                    return [
+                        'courier' => 'dhl',
+                        'error' => 'Tidak dapat mengambil data pelacakan DHL saat ini',
+                        'status' => $response->status(),
+                        'body' => $response->body(),
+                    ];
+                }
+
+                $json = $response->json();
+
+                if (! is_array($json)) {
+                    return [
+                        'courier' => 'dhl',
+                        'error' => 'Format respons DHL tidak valid',
+                    ];
+                }
+
+                return $json;
+            } catch (RequestException $e) {
+                report($e);
 
                 return [
                     'courier' => 'dhl',
                     'error' => 'Tidak dapat mengambil data pelacakan DHL saat ini',
-                    'status' => $response->status(),
-                    'raw' => [
-                        'body' => $response->body(),
-                        'json' => $json,
-                    ],
+                    'status' => $e->response?->status(),
+                    'body' => $e->response?->body(),
+                ];
+            } catch (\Throwable $e) {
+                report($e);
+
+                return [
+                    'courier' => 'dhl',
+                    'error' => 'Tidak dapat mengambil data pelacakan DHL saat ini',
                 ];
             }
+        });
+    }
 
-            return $response->json();
-        } catch (\Illuminate\Http\Client\RequestException $e) {
-            report($e);
-
-            $resp = method_exists($e, 'response') ? $e->response : null;
-
-            $json = null;
-            $body = null;
-            $status = null;
-
-            if ($resp) {
-                $status = $resp->status();
-                $body = $resp->body();
-
-                try {
-                    $json = $resp->json();
-                } catch (\Throwable $ignore) {
-                    $json = null;
-                }
-            }
-
-            return [
-                'courier' => 'dhl',
-                'error' => 'Tidak dapat mengambil data pelacakan DHL saat ini',
-                'status' => $status,
-                'raw' => [
-                    'body' => $body,
-                    'json' => $json,
-                ],
-            ];
-        } catch (\Throwable $e) {
-            report($e);
-
-            return [
-                'courier' => 'dhl',
-                'error' => 'Tidak dapat mengambil data pelacakan DHL saat ini',
-            ];
-        }
+    private function requestTracking(
+        string $host,
+        string $apiKey,
+        bool $verify,
+        string $trackingNumber
+    ): Response {
+        return Http::withOptions([
+            'verify' => $verify,
+        ])->withHeaders([
+            'DHL-API-Key' => $apiKey,
+        ])
+            ->timeout(8)
+            ->retry(2, 100)
+            ->get($host.'/track/shipments', [
+                'trackingNumber' => $trackingNumber,
+            ]);
     }
 }

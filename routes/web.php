@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
 
-require __DIR__ . '/blog.php';
+require __DIR__.'/blog.php';
 
 Route::get('/', [HomeController::class, 'index']);
 
@@ -24,41 +24,44 @@ Route::get('/generate-sitemap', function () {
 
     Sitemap::create()
         ->add(
-            Url::create($baseUrl . '/')
+            Url::create($baseUrl.'/')
                 ->setPriority(1.0)
                 ->setChangeFrequency('daily')
         )
         ->add(
-            Url::create($baseUrl . '/about')
+            Url::create($baseUrl.'/about')
                 ->setPriority(0.7)
                 ->setChangeFrequency('monthly')
         )
         ->add(
-            Url::create($baseUrl . '/services')
+            Url::create($baseUrl.'/services')
                 ->setPriority(0.8)
                 ->setChangeFrequency('monthly')
         )
         ->add(
-            Url::create($baseUrl . '/contact')
+            Url::create($baseUrl.'/contact')
                 ->setPriority(0.6)
                 ->setChangeFrequency('monthly')
         )
         ->add(
-            Url::create($baseUrl . '/tracking')
+            Url::create($baseUrl.'/tracking')
                 ->setPriority(0.9)
                 ->setChangeFrequency('daily')
         )
         ->add(
-            Url::create($baseUrl . '/blog')
+            Url::create($baseUrl.'/blog')
                 ->setPriority(0.7)
                 ->setChangeFrequency('weekly')
         )
         ->add(
-            Url::create($baseUrl . '/blog/create')
+            Url::create($baseUrl.'/blog/create')
                 ->setPriority(0.1)
                 ->setChangeFrequency('monthly')
         )
         ->writeToFile(public_path('sitemap.xml'));
 
-    return 'Sitemap generated for ' . $baseUrl;
-});
+    return 'Sitemap generated for '.$baseUrl;
+})->middleware([
+    'auth.basic',
+    'throttle:3,1',
+]);

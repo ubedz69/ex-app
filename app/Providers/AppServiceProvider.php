@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use App\Http\Controllers\HomeController;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,9 +19,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Ensure a root route exists (helps tests and default app behavior)
-        Route::middleware('web')->group(function () {
-            Route::get('/', [HomeController::class, 'index']);
-        });
+        //
     }
 }

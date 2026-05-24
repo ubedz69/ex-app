@@ -87,6 +87,48 @@
                                 /** @var array<string,mixed> $result */
                                 $result = $result ?? [];
 
+                                $formatDateTime = function (mixed $value): ?string {
+                                    if (! is_string($value) || trim($value) === '') {
+                                        return null;
+                                    }
+
+                                    try {
+                                        return \Carbon\CarbonImmutable::parse($value)
+                                            ->locale('id')
+                                            ->translatedFormat('d M Y, H:i');
+                                    } catch (\Throwable $e) {
+                                        return $value;
+                                    }
+                                };
+
+                                $formatDateLabel = function (string $dateKey): string {
+                                    if ($dateKey === 'unknown-date') {
+                                        return 'Tanggal tidak diketahui';
+                                    }
+
+                                    try {
+                                        return \Carbon\CarbonImmutable::parse($dateKey)
+                                            ->locale('id')
+                                            ->translatedFormat('l, d F Y');
+                                    } catch (\Throwable $e) {
+                                        return $dateKey;
+                                    }
+                                };
+
+                                $formatTimeOnly = function (mixed $value): string {
+                                    if (! is_string($value) || trim($value) === '') {
+                                        return '-';
+                                    }
+
+                                    try {
+                                        return \Carbon\CarbonImmutable::parse($value)
+                                            ->locale('id')
+                                            ->translatedFormat('H:i');
+                                    } catch (\Throwable $e) {
+                                        return $value;
+                                    }
+                                };
+
                                 // DHLService returns either:
                                 // 1) success: $response->json() (e.g. ['shipments' => [...]] )
                                 // 2) failure: ['raw' => ['json' => ...], 'error' => ...]
@@ -172,7 +214,7 @@
 
                                                     @if(isset($status['timestamp']))
                                                         <div style="margin-top:8px;color:#54617a;font-weight:800;font-size:12px;">
-                                                            Updated: {{ $status['timestamp'] }}
+                                                            Updated: {{ $formatDateTime($status['timestamp']) ?? $status['timestamp'] }}
                                                         </div>
                                                     @endif
 
@@ -203,16 +245,6 @@
                                                                     $groups[$dateKey][] = $event;
                                                                 }
 
-                                                                // Convert dateKey to readable label like "Tuesday, May 12, 2026"
-                                                                $formatDateLabel = function (string $dateKey): string {
-                                                                    try {
-                                                                        $dt = new \DateTime($dateKey.' 00:00:00');
-                                                                        return $dt->format('l, F j, Y');
-                                                                    } catch (\Throwable $e) {
-                                                                        return $dateKey;
-                                                                    }
-                                                                };
-
                                                                 // Urutkan tanggal dari bawah ke atas: terbaru di atas.
                                                                 // $groups terbentuk dari $eventsToShow (earliest -> latest), jadi reverse untuk terbaru -> teratas.
                                                                 $groupKeys = array_keys($groups);
@@ -242,12 +274,7 @@
                                                                                     $ts = $event['timestamp'] ?? '';
                                                                                     $loc = $event['location']['address']['addressLocality'] ?? '-';
                                                                                     $desc = $event['description'] ?? '-';
-
-                                                                                    // Extract HH:mm from ISO timestamp
-                                                                                    $timeText = $ts;
-                                                                                    if (is_string($ts) && strpos($ts, 'T') !== false) {
-                                                                                        $timeText = substr($ts, 11, 5);
-                                                                                    }
+                                                                                    $timeText = $formatTimeOnly($ts);
                                                                                 @endphp
                                                                                 <tr>
                                                                                     <td style="text-align:center; padding:6px 4px; border-bottom:1px solid rgba(2,6,23,0.08); font-weight:1000; color:#1b1b18; font-size:11px; vertical-align:top;">{{ $idx }}</td>
