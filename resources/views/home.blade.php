@@ -6,7 +6,6 @@
 
 @push('head')
     <meta name="facebook-domain-verification" content="e9ls3u4g2mud7ql312dbgimsnxfvil" />
-    <meta name="google-site-verification" content="HOE3NzPZKAvcOgH1gcFl-3-DJt7QAb_Cv7fwkN0LKII" />
 @endpush
 
 @section('content')
