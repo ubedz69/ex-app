@@ -20,7 +20,11 @@ Route::get('/contact', [PageController::class, 'contact']);
 Route::post('/contact', [PageController::class, 'submitContact']);
 
 Route::get('/generate-sitemap', function () {
-    $baseUrl = 'https://rairakaexpress.com';
+    $baseUrl = rtrim((string) config('app.url', 'https://rairakaexpress.com'), '/');
+
+    if ($baseUrl === '') {
+        $baseUrl = 'https://rairakaexpress.com';
+    }
 
     Sitemap::create()
         ->add(
@@ -52,11 +56,6 @@ Route::get('/generate-sitemap', function () {
             Url::create($baseUrl.'/blog')
                 ->setPriority(0.7)
                 ->setChangeFrequency('weekly')
-        )
-        ->add(
-            Url::create($baseUrl.'/blog/create')
-                ->setPriority(0.1)
-                ->setChangeFrequency('monthly')
         )
         ->writeToFile(public_path('sitemap.xml'));
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureCanonicalUrl;
 use App\Http\Middleware\MinifyHtmlResponse;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -36,6 +37,7 @@ return Application::configure(
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->web(append: [
+            EnsureCanonicalUrl::class,
             MinifyHtmlResponse::class,
         ]);
     })

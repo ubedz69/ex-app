@@ -30,9 +30,4 @@
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
-    <url>
-    <loc>https://rairakaexpress.com/blog/create</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.1</priority>
-            </url>
 </urlset>

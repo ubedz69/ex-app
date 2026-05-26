@@ -24,7 +24,27 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <title>@yield('title', 'Rai Raka Express')</title>
     <meta name="description" content="@yield('meta_description', 'Cepat cek nomor resi DHL & FedEx. Pelacakan cepat, aman, mudah.')">
     <meta name="keywords" content="@yield('meta_keywords', '')">
-    <link rel="canonical" href="{{ url()->current() }}">
+    @php
+        $canonicalBase = rtrim((string) config('app.url'), '/');
+        $canonicalPath = request()->getPathInfo();
+        $canonicalPath = $canonicalPath === '/' ? '/' : rtrim($canonicalPath, '/');
+        $canonicalUrl = $canonicalBase !== ''
+            ? $canonicalBase . ($canonicalPath === '/' ? '/' : $canonicalPath)
+            : url()->current();
+
+        $robotsDirective = null;
+
+        if (request()->is('blog/create')) {
+            $robotsDirective = 'noindex, nofollow';
+        } elseif (request()->is('tracking') && request()->query('tracking_number')) {
+            $robotsDirective = 'noindex, follow';
+        }
+    @endphp
+    <link rel="canonical" href="{{ $canonicalUrl }}">
+    <meta property="og:url" content="{{ $canonicalUrl }}">
+    @if ($robotsDirective !== null)
+        <meta name="robots" content="{{ $robotsDirective }}">
+    @endif
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="{{ asset('images/favicon.svg') }}" type="image/svg+xml">
