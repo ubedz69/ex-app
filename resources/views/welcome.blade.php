@@ -4,13 +4,21 @@
 @section('meta_description', 'Rai Raka Express menyediakan jasa ekspedisi internasional door-to-door ke luar negeri, termasuk Jepang. Dapatkan harga kompetitif dan tracking real-time.')
 @section('meta_keywords', 'jasa ekspedisi internasional, jasa kirim barang luar negeri, cargo internasional murah, pengiriman barang ke Jepang, ekspedisi Indonesia Jepang, jasa import export terpercaya, pengiriman door to door internasional, jasa kirim paket cepat luar negeri, cargo udara internasional, jasa pengiriman barang UMKM export, Rai Raka Express, Rai Raka Express cargo, Rai Raka Express Jepang, Rai Raka Express tracking, Rai Raka Express ekspedisi internasional, Rai Raka Express pengiriman luar negeri')
 
+@push('head')
+    <link rel="preload" as="image" href="{{ asset('images/hero-illustration-custom.svg') }}" type="image/svg+xml" fetchpriority="high">
+@endpush
+
 @section('content')
+    @php
+        $posts = $posts ?? [];
+    @endphp
+
     <div class="container">
         <section class="hero card" style="background:#fff; padding:22px;">
             <div class="left" style="max-width:560px;">
                 <div style="display:flex;align-items:center;gap:12px; margin-bottom:10px;">
                     <div style="width:72px;height:72px;border:5px solid var(--brand-blue);border-radius:18px;display:flex;align-items:center;justify-content:center;background:#fff;">
-                        <img src="{{ asset('images/logo-compact.png') }}" alt="{{ config('app.name') }}" style="height:40px;width:auto;object-fit:contain;">
+                        <img src="{{ asset('images/logo-compact-180.png') }}" alt="{{ config('app.name') }}" width="73" height="40" decoding="async" style="height:40px;width:auto;object-fit:contain;">
                     </div>
                     <div>
                         <h1 class="hero-title" style="margin:0;">Kirim Barang ke Luar Negeri</h1>
@@ -82,7 +90,7 @@
                             </div>
                         </div>
 
-                        <img src="{{ asset('images/hero-illustration-custom.svg') }}" alt="Ilustrasi ekspedisi luar negeri" class="brand-hero-logo" style="width:100%;max-height:320px;object-fit:contain;">
+                        <img src="{{ asset('images/hero-illustration-custom.svg') }}" alt="Ilustrasi ekspedisi luar negeri" class="brand-hero-logo" width="900" height="520" fetchpriority="high" decoding="async" style="width:100%;max-height:320px;object-fit:contain;">
                         <div style="margin-top:10px; font-size:13px; color:#54617a; font-weight:600;">
                             Logo + warna brand mengikuti template site.
                         </div>
@@ -134,11 +142,6 @@
             <p style="margin:0 0 12px 0;color:#54617a;font-weight:700;line-height:1.6;">
                 Ringkasan posting terbaru kami tampil di sini. (Dari halaman Blog)
             </p>
-
-            @php
-                $posts = app('App\Http\Controllers\BlogController')->latestSummaries(3);
-                $posts = is_array($posts) ? $posts : [];
-            @endphp
 
             @if(count($posts) === 0)
                 <div style="padding:14px;border-radius:12px;border:2px dashed rgba(2,6,23,0.12);color:#54617a;font-weight:700;background:rgba(2,6,23,0.02);">

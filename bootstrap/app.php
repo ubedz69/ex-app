@@ -24,11 +24,6 @@ return Application::configure(
 
             Route::middleware('web')
                 ->group(
-                    base_path('routes/tracking.php')
-                );
-
-            Route::middleware('web')
-                ->group(
                     base_path('routes/seo.php')
                 );
 

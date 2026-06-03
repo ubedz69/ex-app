@@ -2,22 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\BlogPostStore;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
-    private const STORAGE_FILE = 'blog-posts.json';
+    public function __construct(private BlogPostStore $blogPostStore) {}
 
     public function index(): View
     {
-        $posts = $this->loadPosts();
-
         return view('blog.index', [
-            'posts' => $posts,
+            'posts' => $this->blogPostStore->all(),
         ]);
     }
 
@@ -44,10 +42,10 @@ class BlogController extends Controller
 
         try {
             Cache::lock('blog-posts-write', 10)->block(5, function () use ($post): void {
-                $posts = $this->loadPosts();
+                $posts = $this->blogPostStore->all();
                 $posts[] = $post;
 
-                $this->savePosts($posts);
+                $this->blogPostStore->save($posts);
             });
         } catch (\Throwable $e) {
             report($e);
@@ -59,32 +57,6 @@ class BlogController extends Controller
         }
 
         return redirect()->to('/blog')->with('status', 'Blog berhasil diposting.');
-    }
-
-    public function latestSummaries(int $limit = 3): array
-    {
-        $posts = $this->loadPosts();
-
-        $posts = array_reverse($posts);
-
-        return array_slice($posts, 0, $limit);
-    }
-
-    private function loadPosts(): array
-    {
-        if (! Storage::disk('local')->exists(self::STORAGE_FILE)) {
-            return [];
-        }
-
-        $raw = Storage::disk('local')->get(self::STORAGE_FILE);
-        $decoded = json_decode($raw, true);
-
-        return is_array($decoded) ? $decoded : [];
-    }
-
-    private function savePosts(array $posts): void
-    {
-        Storage::disk('local')->put(self::STORAGE_FILE, json_encode($posts, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     }
 
     private function makeId(): string

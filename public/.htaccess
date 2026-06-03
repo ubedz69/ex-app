@@ -1,7 +1,34 @@
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
-    </IfModule>
+</IfModule>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 1 month"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.(css|js|mjs)$">
+        Header set Cache-Control "public, max-age=2592000"
+    </FilesMatch>
+
+    <FilesMatch "\.(png|jpe?g|gif|webp|svg|ico|woff2?|ttf|otf)$">
+        Header set Cache-Control "public, max-age=31536000"
+    </FilesMatch>
+
+    SetEnvIf Request_URI "^/build/" fingerprinted_asset
+    Header set Cache-Control "public, max-age=31536000, immutable" env=fingerprinted_asset
+</IfModule>
 
     RewriteEngine On
 

@@ -12,7 +12,7 @@
                 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;">
                     <div style="display:flex;align-items:center;gap:12px;">
                         <div style="width:52px;height:52px;border:4px solid var(--brand-blue);border-radius:16px;display:flex;align-items:center;justify-content:center;background:#fff;">
-                            <img src="{{ asset('images/logo-compact.png') }}" alt="{{ config('app.name') }} logo" style="height:28px;width:auto;">
+                            <img src="{{ asset('images/logo-compact-180.png') }}" alt="{{ config('app.name') }} logo" width="51" height="28" decoding="async" style="height:28px;width:auto;">
                         </div>
                         <div>
                             <h1 class="hero-title" style="margin:0; font-size:28px;">Pelacakan Paket</h1>

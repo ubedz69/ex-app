@@ -46,9 +46,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <meta name="robots" content="{{ $robotsDirective }}">
     @endif
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="{{ asset('images/favicon.svg') }}" type="image/svg+xml">
-    <link rel="stylesheet" href="{{ asset('css/brand.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="{{ asset('css/brand.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="{{ asset('css/brand.css') }}">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+    </noscript>
     @stack('head')
 </head>
 <body>
@@ -70,21 +76,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                            class="btn btn-outline"
                            aria-label="WhatsApp"
                            style="display:inline-flex;align-items:center;justify-content:center;padding:8px 10px;border-radius:12px;min-height:44px;min-width:44px;white-space:nowrap;border:1px solid rgba(2,6,23,0.08);text-decoration:none;background:transparent;color:#000;">
-<img aria-hidden="true" src="{{ asset('images/icon-wa.png') }}" alt="" width="26" height="26" style="display:block;border-radius:8px;">
+<img aria-hidden="true" src="{{ asset('images/icon-wa-52.png') }}" alt="" width="26" height="26" decoding="async" style="display:block;border-radius:8px;">
                         </a>
 
                         <a href="https://facebook.com/rairakaexpress" target="_blank" rel="noopener noreferrer"
                            class="btn btn-outline"
                            aria-label="Facebook"
                            style="display:inline-flex;align-items:center;justify-content:center;padding:8px 10px;border-radius:12px;min-height:44px;min-width:44px;white-space:nowrap;border:1px solid rgba(2,6,23,0.08);text-decoration:none;background:transparent;color:#000;">
-                            <img aria-hidden="true" src="{{ asset('images/icon-fb.svg') }}" alt="" width="26" height="26" style="display:block;border-radius:8px;">
+                            <img aria-hidden="true" src="{{ asset('images/icon-fb.svg') }}" alt="" width="26" height="26" decoding="async" style="display:block;border-radius:8px;">
                         </a>
 
                         <a href="https://instagram.com/rairaka_express" target="_blank" rel="noopener noreferrer"
                            class="btn btn-outline"
                            aria-label="Instagram"
                            style="display:inline-flex;align-items:center;justify-content:center;padding:8px 10px;border-radius:12px;min-height:44px;min-width:44px;white-space:nowrap;border:1px solid rgba(2,6,23,0.08);text-decoration:none;background:transparent;color:#000;">
-                            <img aria-hidden="true" src="{{ asset('images/icon-ig.svg') }}" alt="" width="26" height="26" style="display:block;border-radius:8px;">
+                            <img aria-hidden="true" src="{{ asset('images/icon-ig.svg') }}" alt="" width="26" height="26" decoding="async" style="display:block;border-radius:8px;">
                         </a>
                     </div>
                 </div>
@@ -92,7 +98,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
 
         <div class="container header-inner" style="padding-top:18px;padding-bottom:18px;">
-<a href="/" class="logo-link"><img src="{{ asset('images/logo-compact.png') }}" alt="Rai Raka Express" class="logo-img"></a>
+<a href="/" class="logo-link"><img src="{{ asset('images/logo-compact-180.png') }}" alt="Rai Raka Express" class="logo-img" width="103" height="56" decoding="async"></a>
 
             <button id="menu-button" aria-controls="main-nav" aria-expanded="false" class="btn btn-ghost" aria-label="Toggle navigation">Menu</button>
 

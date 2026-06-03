@@ -6,6 +6,7 @@
 
 @push('head')
     <meta name="facebook-domain-verification" content="e9ls3u4g2mud7ql312dbgimsnxfvil" />
+    <link rel="preload" as="image" href="{{ asset('images/hero-illustration-custom.svg') }}" type="image/svg+xml" fetchpriority="high">
 @endpush
 
 @section('content')
@@ -49,7 +50,7 @@
 
         <div class="right">
             <div class="card" style="display:flex;align-items:center;justify-content:center;">
-                <img src="{{ asset('images/hero-illustration-custom.svg') }}" alt="Ilustrasi pelacakan" class="brand-hero-logo">
+                <img src="{{ asset('images/hero-illustration-custom.svg') }}" alt="Ilustrasi pelacakan" class="brand-hero-logo" width="900" height="520" fetchpriority="high" decoding="async">
             </div>
         </div>
     </section>

@@ -24,12 +24,12 @@ test('tracking check endpoint is throttled', function () {
     $this->withoutMiddleware(ValidateCsrfToken::class);
 
     for ($index = 0; $index < 10; $index++) {
-        $this->post('/tracking/check', [
+        $this->post('/tracking', [
             'tracking_number' => 'abc',
         ])->assertOk();
     }
 
-    $this->post('/tracking/check', [
+    $this->post('/tracking', [
         'tracking_number' => 'abc',
     ])->assertStatus(429);
 });
